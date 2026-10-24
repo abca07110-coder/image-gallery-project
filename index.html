@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>معرض الصور الاحترافي - Image Gallery</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #767676, #2b2b2b);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: #fff;
+      }
+
+      .gallery-card {
+        background: #c1c1c2;
+        color: #333333;
+        width: 90%;
+        max-width: 650px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        padding: 25px;
+        text-align: center;
+      }
+
+      .gallery-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        letter-spacing: 0.5px;
+      }
+
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 380px;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #000000;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition:
+          transform 0.5s ease,
+          opacity 0.4s ease-in-out;
+      }
+
+      .image-wrapper img:hover {
+        transform: scale(1.02);
+      }
+
+      .control-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.85);
+        color: #2c3e50;
+        border: none;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        transition: all 0.3s ease;
+      }
+
+      .control-btn:hover {
+        background-color: #ffffff;
+        color: #e74c3c;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      /* تم ضبط الأماكن بدقة لكي تظهر السهمين بوضوح دون اختفاء */
+      .prev-btn {
+        left: 15px;
+      }
+
+      .next-btn {
+        right: 15px;
+      }
+
+      .gallery-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding: 0 10px;
+      }
+
+      .image-caption {
+        font-size: 16px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .counter-badge {
+        background-color: #3498db;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gallery-card">
+      <h2 class="gallery-title">معرض الصور الاحترافي</h2>
+
+      <div class="image-wrapper">
+        <button class="control-btn next-btn" id="nextBtn">&#10095;</button>
+
+        <img
+          id="mainImage"
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+          alt="Landscape"
+        />
+        <button class="control-btn prev-btn" id="prevBtn">&#10094;</button>
+      </div>
+
+      <div class="gallery-footer">
+        <span class="image-caption" id="imageCaption">سحر الطبيعة والبحار</span>
+        <span class="counter-badge" id="imageCounter">1 / 4</span>
+      </div>
+    </div>
+
+    <script>
+      const galleryData = [
+        {
+          url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+          caption: "سحر الطبيعة والبحار الساحرة",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+          caption: "قمم الجبال الشاهقة والثلوج",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
+          caption: "ليلة مليئة بالنجوم المتلألئة",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
+          caption: "غابات خضراء هادئة وساحرة",
+        },
+      ];
+
+      let currentIndex = 0;
+
+      const mainImage = document.getElementById("mainImage");
+      const imageCaption = document.getElementById("imageCaption");
+      const imageCounter = document.getElementById("imageCounter");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+
+      function updateGalleryView() {
+        mainImage.style.opacity = 0;
+        setTimeout(() => {
+          mainImage.src = galleryData[currentIndex].url;
+          imageCaption.textContent = galleryData[currentIndex].caption;
+          imageCounter.textContent = `${currentIndex + 1} / ${galleryData.length}`;
+          mainImage.style.opacity = 1;
+        }, 200);ذ
+      }
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          currentIndex === 0 ? galleryData.length - 1 : currentIndex - 1;
+        updateGalleryView();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex =
+          currentIndex === galleryData.length - 1 ? 0 : currentIndex + 1;
+        updateGalleryView();
+      });
+    </script>
+  </body>
+</html>
